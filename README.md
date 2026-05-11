@@ -2,7 +2,7 @@
 
 Projet réalisé dans le cadre de mon stage à la Communauté de Communes.
 
-Ce serveur Node.js sert d’intermédiaire entre Topkapi et plusieurs API externes :
+Ce serveur Node.js sert d’intermédiaire entre le logiciel Topkapi et plusieurs API externes :
 - Open-Meteo
 - Hub’Eau Nappes
 - Hub’Eau Qualité Eau Potable
@@ -16,16 +16,7 @@ Topkapi appelle ce serveur local, qui récupère les données externes, les refo
 ## Architecture
 Topkapi → Script Topkapi → Serveur Node.js local → APIs externes
 
-
-
-
-
-
-
-
-
-
-
+<img width="953" height="665" alt="image" src="https://github.com/user-attachments/assets/18edb939-a1eb-4fe3-9aba-b10404ccc387" />
 
 ## Technologies
 
