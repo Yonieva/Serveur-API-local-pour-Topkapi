@@ -35,7 +35,7 @@ Topkapi → Script Topkapi → Serveur Node.js local → APIs externes
 | `/api/data/nappes/:codeBss` | Données nappes phréatiques |
 | `/api/data/qualite/:codeInsee` | Qualité de l’eau potable |
 | `/api/data/vigicrues/:station` | Niveau ou débit Vigicrues |
-| `/api/data/iccpro/api/get****` | Volume/Débit/Etat des vannes, compteurs du nouveau projet de Réutilisation des Eaux Usées Traitées |
+| `/api/data/iccpro/api/get****` | Volume/Débit/Etat des vannes et compteurs du nouveau projet de Réutilisation des Eaux Usées Traitées |
 
 ## Sécurité
 
