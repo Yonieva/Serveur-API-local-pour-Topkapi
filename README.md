@@ -16,7 +16,11 @@ Topkapi appelle ce serveur local, qui récupère les données externes, les refo
 ## Architecture
 Topkapi → Script Topkapi → Serveur Node.js local → APIs externes
 
-<img width="953" height="665" alt="image" src="https://github.com/user-attachments/assets/18edb939-a1eb-4fe3-9aba-b10404ccc387" />
+## Exemple final pour un Utilisateur
+
+<img width="1913" height="957" alt="synoptique" src="https://github.com/user-attachments/assets/976ab5eb-fcd6-4ece-aa93-926ff13b8436" />
+<img width="747" height="528" alt="popup" src="https://github.com/user-attachments/assets/b46db22a-6f1f-4369-9124-98510b4c3ec1" />
+
 
 ## Technologies
 
