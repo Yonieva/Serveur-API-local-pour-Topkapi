@@ -7,6 +7,8 @@ Ce serveur Node.js sert d’intermédiaire entre le logiciel Topkapi et plusieur
 - Hub’Eau Nappes
 - Hub’Eau Qualité Eau Potable
 - Vigicrues
+- EDF
+- INSEE
 - ICCPRO / REUT (Réutilisation des Eaux Usées après Traitement)
 
 ## Objectif
@@ -31,15 +33,17 @@ Topkapi → Script Topkapi → Serveur Node.js local → APIs externes
 - PM2
 - Topkapi Vision
 
-## Endpoints principaux
+## 🔌 Endpoints principaux
 
-| Endpoint | Rôle |
-|---|---|
-| `/api/data/meteo` | Données météo |
-| `/api/data/nappes/:codeBss` | Données nappes phréatiques |
-| `/api/data/qualite/:codeInsee` | Qualité de l’eau potable |
-| `/api/data/vigicrues/:station` | Niveau ou débit Vigicrues |
-| `/api/data/iccpro/api/get****` | Volume/Débit/Etat des vannes et compteurs du nouveau projet de Réutilisation des Eaux Usées Traitées |
+| Endpoint | Description |
+|-----------|------------|
+| `/api/data/meteo`              | Données météorologiques en temps réel et prévisions |
+| `/api/data/nappes/:codeBss`    | Niveau et état des nappes phréatiques |
+| `/api/data/qualite/:codeInsee` | Qualité de l'eau potable par commune |
+| `/api/data/vigicrues/:station` | Niveaux et débits des cours d'eau (Vigicrues) |
+| `/api/data/iccpro/api/get****` | Données REUT : compteurs, vannes, capteurs, volumes et débits |
+| `/api/data/insee/api/get****`  | Données démographiques INSEE |
+| `/api/data/edf/api/get****`    | Données de facturation et de consommation électrique EDF issues des fichiers CSV |
 
 ## Sécurité
 
