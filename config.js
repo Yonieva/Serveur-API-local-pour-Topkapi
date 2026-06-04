@@ -16,7 +16,9 @@ module.exports =
     qualite: '0 15 * * *',      // Tous les jours à 17h00 pour la qualité
 	vigicrues: '0 * * * *',     // Toutes les heures (a la minute 0 de chaque heure)
 	meteo: '*/10 * * * *',       // Toutes les 10 minutes
-	iccpro: '*/5 * * * *'		// Toutes les 5 minutes
+	iccpro: '*/5 * * * *',		// Toutes les 5 minutes
+	insee: '0 5 * * 1',         // Touts les lundis a 5h00
+	edf: '*/1 * * * *'          //Toutes les minutes
   },
    
 //--------------------------------------------------------------------------------------------------
@@ -103,22 +105,22 @@ module.exports =
       longitude: 3.1055,
       api: "API_METEO_PORTVENDRES"
     },
-	SAINTANDRE: { 
+	STANDRE: { 
       latitude: 42.552, 
       longitude: 2.9713,
-      api: "API_METEO_SAINTANDRE"
+      api: "API_METEO_STANDRE"
     },
-	SAINTGENIS: { 
+	STGENIS: { 
       latitude: 42.5433, 
       longitude: 2.9206,
-      api: "API_METEO_SAINTGENIS"
+      api: "API_METEO_STGENIS"
     },
 	SOREDE: { 
       latitude: 42.5307, 
       longitude: 2.9571,
       api: "API_METEO_SOREDE"
     },
-	VILELONGUE: { 
+	VILLELONGUE: { 
       latitude: 42.5256, 
       longitude: 2.9043,
       api: "API_METEO_VILLELONGUE"

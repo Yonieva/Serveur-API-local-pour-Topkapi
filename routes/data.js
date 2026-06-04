@@ -91,12 +91,15 @@ router.get('/:type/:code', (req, res) => {
                 });
         }
 
-        if (!data) {
-            return res.status(404).json({
-                success: false,
-                error: "Données non trouvées"
-            });
-        }
+		if (!data || data.success === false) {
+			return res.status(404).json({
+				success: false,
+				type,
+				code,
+				error: data?.error || "Données non trouvées",
+				timestamp: new Date().toISOString()
+			});
+		}
 
         return res.json({
             success: true,
@@ -235,40 +238,45 @@ router.get('/vigicrues', async (req, res) => {
 
 
 // ======================================================
-// 🌤️ METEO ALL (FIX CRITIQUE)
+// 🌤️ METEO ALL
+// GET /api/data/meteo
 // ======================================================
 router.get('/meteo', (req, res) => {
     try {
         const allData = {};
 
-        config.meteoSecteurs.forEach(code => {
-            const data = meteoService.getData(code);
+        Object.keys(config.meteoSecteurs || {}).forEach(code => {
+            const result = meteoService.getData(code);
 
-            if (data) {
+            if (result?.success && result?.data) {
                 allData[code] = {
-                    now: data.now ?? null,
-                    h1: data.h1 ?? null,
-                    today: data.today ?? null,
-                    j1: data.j1 ?? null,
-                    j2: data.j2 ?? null,
-                    j3: data.j3 ?? null,
-                    j4: data.j4 ?? null,
-                    j5: data.j5 ?? null,
-                    j6: data.j6 ?? null,
-                    j7: data.j7 ?? null
+                    now: result.data.now ?? null,
+                    h1: result.data.h1 ?? null,
+                    today: result.data.today ?? null,
+                    j1: result.data.j1 ?? null,
+                    j2: result.data.j2 ?? null,
+                    j3: result.data.j3 ?? null,
+                    j4: result.data.j4 ?? null,
+                    j5: result.data.j5 ?? null,
+                    j6: result.data.j6 ?? null,
+                    j7: result.data.j7 ?? null
                 };
             }
         });
 
-        res.json({
+        return res.json({
             success: true,
             count: Object.keys(allData).length,
-            data: allData
+            data: allData,
+            timestamp: new Date().toISOString()
         });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false });
+        console.error('❌ METEO ALL:', err.message);
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        });
     }
 });
 

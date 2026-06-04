@@ -9,11 +9,14 @@
     "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
+    "adm-zip": "^0.5.17",
     "axios": "^1.14.0",
     "cors": "^2.8.6",
+    "csv-parse": "^6.2.1",
     "dotenv": "^17.4.2",
     "express": "^4.22.1",
     "node-cron": "^3.0.3",
+    "nodemailer": "^8.0.9",
     "openmeteo": "^1.2.3"
   },
   "devDependencies": {

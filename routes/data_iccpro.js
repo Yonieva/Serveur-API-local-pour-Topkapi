@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 const iccproService = require('../services/iccpro/service_iccpro');
 const { MAPPING } = require('../services/iccpro/mapping');
 
@@ -121,7 +120,7 @@ router.get('/tag/:tag', (req, res) => {
             return res.json({
                 success: true,
                 data: {
-                    value: meter.flow,
+                    value: meter.flow / 1000,
                     lastSample: meter.lastSample
                 }
             });
@@ -131,11 +130,21 @@ router.get('/tag/:tag', (req, res) => {
             return res.json({
                 success: true,
                 data: {
-                    value: meter.accumulator,
+                    value: meter.accumulator / 1000,
                     lastSample: meter.lastSample
                 }
             });
         }
+		
+		if (tag === m.tags?.description) {
+			return res.json({
+				success: true,
+				data: {
+					value: meter.description || "",
+					lastSample: meter.lastSample
+				}
+			});
+		}
 
         if (tag === m.tags?.error) {
             return res.json({

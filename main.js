@@ -1,15 +1,17 @@
 const express = require('express');
 const cors = require('cors');
-const config = require('./config');
+const fs = require('fs');
+const path = require('path');
 
+const config = require('./config');
 const nappesService = require('./services/service_nappes');
 const qualiteService = require('./services/service_qualite');
 const vigicruesService = require('./services/service_vigicrues');
 const meteoService = require('./services/service_meteo');
 const iccproService = require('./services/iccpro/service_iccpro');
+const edfService = require('./services/service_edf');
+const inseeService = require('./services/service_insee');
 
-const fs = require('fs');
-const path = require('path');
 
 // =====================================================
 // 📁 LOG FILE
@@ -64,7 +66,9 @@ const services = [
   { name: 'qualite', service: qualiteService },
   { name: 'vigicrues', service: vigicruesService },
   { name: 'meteo', service: meteoService },
-  { name: 'iccpro', service: iccproService }
+  { name: 'iccpro', service: iccproService },
+  { name: 'insee', service: inseeService },
+  { name: 'edf', service: edfService }
 ];
 
 services.forEach(({ name, service }) => {
@@ -86,7 +90,8 @@ services.forEach(({ name, service }) => {
 // =====================================================
 app.use('/api/data', require('./routes/data'));
 app.use('/api/iccpro', require('./routes/data_iccpro'));
-
+app.use('/api/edf', require('./routes/data_edf'));
+app.use('/api/insee', require('./routes/data_insee'));
 // =====================================================
 // ❤️ HEALTH CHECK
 // =====================================================
