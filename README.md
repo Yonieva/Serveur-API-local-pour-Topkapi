@@ -19,7 +19,14 @@ Topkapi appelle ce serveur local, qui récupère les données externes, les refo
 Topkapi → Script Topkapi → Serveur Node.js local → APIs externes
 
 ## Exemple final pour un Utilisateur
+HYPERVISION QUALITE DE l'EAU (exemple, chiffres factices)
+<img width="1672" height="941" alt="Qualité - General" src="https://github.com/user-attachments/assets/e4906f53-f5e4-4dad-a78e-72f15a5b00f6" />
+HYPERVISION ENERGIE (exemple, chiffres factices)
+<img width="1672" height="941" alt="Energie - General" src="https://github.com/user-attachments/assets/436b5754-c2f1-4d06-91b1-8f315c96ea5a" />
+HYPERVISION RECHERCHE DE FUITES (exemple, chiffres factices)
+<img width="1672" height="941" alt="Fuites - General" src="https://github.com/user-attachments/assets/ad2327c5-363e-42b0-84b7-69b29061c3ed" />
 
+SCHEMA SUPERVISION REUTILISATION DES EAUX USEES (REUT)
 <img width="1913" height="957" alt="synoptique" src="https://github.com/user-attachments/assets/976ab5eb-fcd6-4ece-aa93-926ff13b8436" />
 <img width="747" height="528" alt="popup" src="https://github.com/user-attachments/assets/b46db22a-6f1f-4369-9124-98510b4c3ec1" />
 
