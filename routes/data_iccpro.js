@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const iccproService = require('../services/iccpro/service_iccpro');
 const { MAPPING } = require('../services/iccpro/mapping');
 
@@ -15,6 +16,42 @@ router.get('/status', (req, res) => {
 });
 
 // ======================================================
+// 🧮 HELPER REUT PROGRAMS TAGS
+// ======================================================
+function getReutProgramValue(tag, programs) {
+    if (!programs) return null;
+
+    const totals = programs.totals || {};
+    const farmers = programs.farmers || [];
+
+    const reutTags = {
+        ICCPRO_REUT_TOTAL_COMMANDE: totals.commande,
+        ICCPRO_REUT_TOTAL_FOURNI: totals.fourni,
+        ICCPRO_REUT_TOTAL_RESTANT: totals.restant
+    };
+
+    if (reutTags[tag] !== undefined) {
+        return reutTags[tag];
+    }
+
+    const match = tag.match(/^ICCPRO_REUT_(.+)_(COMMANDE|FOURNI|RESTANT)$/);
+    if (!match) return null;
+
+    const farmerName = match[1];
+    const field = match[2];
+
+    const farmer = farmers.find(f => f.farmer === farmerName);
+    if (!farmer)
+		return 0;
+
+    if (field === 'COMMANDE') return farmer.commande;
+    if (field === 'FOURNI') return farmer.fourni;
+    if (field === 'RESTANT') return farmer.restant;
+
+    return null;
+}
+
+// ======================================================
 // 🔎 SINGLE TAG VALUE
 // GET /api/iccpro/tag/:tag
 // ======================================================
@@ -27,8 +64,23 @@ router.get('/tag/:tag', (req, res) => {
     const meters = iccproService.getData('meters') || [];
     const digitalInputs = iccproService.getData('digitalinputs') || [];
     const sensors = iccproService.getData('sensors') || [];
+    const programs = iccproService.getData('programs');
 
     console.log(`[ICC TAG] ${tag}`);
+
+    // ==================================================
+    // 🧮 REUT PROGRAMS / COMMANDES AGRICULTEURS
+    // ==================================================
+    const reutValue = getReutProgramValue(tag, programs);
+    if (reutValue !== null) {
+        return res.json({
+            success: true,
+            data: {
+                value: reutValue,
+                lastSample: new Date().toISOString()
+            }
+        });
+    }
 
     // ==================================================
     // 🔵 VALVES
@@ -135,16 +187,16 @@ router.get('/tag/:tag', (req, res) => {
                 }
             });
         }
-		
-		if (tag === m.tags?.description) {
-			return res.json({
-				success: true,
-				data: {
-					value: meter.description || "",
-					lastSample: meter.lastSample
-				}
-			});
-		}
+
+        if (tag === m.tags?.description) {
+            return res.json({
+                success: true,
+                data: {
+                    value: meter.description || "",
+                    lastSample: meter.lastSample
+                }
+            });
+        }
 
         if (tag === m.tags?.error) {
             return res.json({
@@ -265,6 +317,7 @@ router.get('/:type', (req, res) => {
                 'digitalinputs',
                 'digital',
                 'sensors',
+                'programs',
                 'mapping',
                 'hydraulic'
             ]

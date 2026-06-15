@@ -28,9 +28,9 @@ router.get('/scan', async (req, res) => {
 
 router.get('/value/:tag', (req, res) => {
   const tag = req.params.tag;
-  const value = inseeService.getValueFromTag(tag);
+  const result = inseeService.getValueFromTag(tag);
 
-  if (value === null || value === undefined) {
+	if (result === null || result === undefined) {
     return res.status(404).json({
       success: false,
       value: null,
@@ -40,7 +40,8 @@ router.get('/value/:tag', (req, res) => {
 
   res.json({
     success: true,
-    value
+    value:result.value,
+	date:result.date
   });
 });
 

@@ -75,10 +75,10 @@ module.exports =
       longitude: 3.0823,
       api: "API_METEO_COLLIOURE"
     },
-	ELNES: { 
+	ELNE: { 
       latitude: 42.6043, 
       longitude: 2.9718,
-      api: "API_METEO_ELNES"
+      api: "API_METEO_ELNE"
     },
 	LAROQUE: { 
       latitude: 42.5235, 

@@ -6,6 +6,7 @@ const { getDigitalInputs } = require('./digitalinputs');
 const { getAnalogInputs } = require('./analoginputs');
 const { getValvesStatus } = require('./valves');
 const { getSensors } = require('./sensors');
+const { getPrograms } = require('./programs');
 
 let cache = {
     analogs: [],
@@ -13,6 +14,7 @@ let cache = {
     meters: [],
     digitalInputs: [],
     sensors: [],
+    programs: null,
     hydraulicMap: []
 };
 
@@ -39,13 +41,15 @@ async function fetchICCPro() {
             valves,
             meters,
             digitalInputs,
-            sensors
+            sensors,
+            programs
         ] = await Promise.all([
             getAnalogInputs(),
             getValvesStatus(),
             getMeters(),
             getDigitalInputs(),
-            getSensors()
+            getSensors(),
+            getPrograms()
         ]);
 
         cache = {
@@ -54,6 +58,7 @@ async function fetchICCPro() {
             meters,
             digitalInputs,
             sensors,
+            programs,
             hydraulicMap: []
         };
 
@@ -65,7 +70,8 @@ async function fetchICCPro() {
             `valves=${valves.length} ` +
             `meters=${meters.length} ` +
             `digitalInputs=${digitalInputs.length} ` +
-            `sensors=${sensors.length}`
+            `sensors=${sensors.length} ` +
+            `programs=${programs?.raw?.length || 0}`
         );
 
     } catch (err) {
@@ -108,6 +114,8 @@ function getStatus() {
         meterCount: cache.meters.length,
         digitalInputCount: cache.digitalInputs.length,
         sensorCount: cache.sensors.length,
+        programCount: cache.programs?.raw?.length || 0,
+        farmerCount: cache.programs?.farmers?.length || 0,
         hydraulicMapCount: cache.hydraulicMap.length
     };
 }
@@ -131,6 +139,9 @@ function getData(type) {
 
         case 'sensors':
             return cache.sensors;
+
+        case 'programs':
+            return cache.programs;
 
         case 'digitalinputs':
         case 'digital':

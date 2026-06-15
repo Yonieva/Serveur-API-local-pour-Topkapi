@@ -15,8 +15,12 @@ let cache = {
   communes: {},
   total: {
     population: 0,
-    residencesSecondaires: 0
-  }
+    residencesSecondaires: 0,
+    residencesPrincipales: 0,
+    residencesOccupeesProprietaire: 0
+  },
+  year: null,
+  date: null
 };
 
 const COMMUNES = {
@@ -47,11 +51,31 @@ function cleanNumber(value) {
   ) || 0;
 }
 
+function detectInseeYear(row) {
+  const popField = Object.keys(row).find(k => /^P\d{2}_POP$/.test(k));
+
+  if (!popField) return null;
+
+  const yy = popField.substring(1, 3);
+  const year = 2000 + Number(yy);
+
+  return {
+    year,
+    date: `${year}-01-01T00:00:00.000Z`,
+    fields: {
+      population: `P${yy}_POP`,
+      residencesSecondaires: `P${yy}_RSECOCC`,
+      residencesPrincipales: `P${yy}_RP`,
+      residencesOccupeesProprietaire: `P${yy}_RP_PROP`
+    }
+  };
+}
+
 async function fetchData() {
   if (isUpdating) return;
 
   isUpdating = true;
-  console.log('⏳ [INSEE] MAJ population + résidences secondaires...');
+  console.log('⏳ [INSEE] MAJ population + logements...');
 
   try {
     const response = await axios.get(INSEE_ZIP_URL, {
@@ -60,6 +84,7 @@ async function fetchData() {
     });
 
     const zip = new AdmZip(response.data);
+
     const csvEntry = zip.getEntries().find(e =>
       e.entryName.toLowerCase().endsWith('.csv')
     );
@@ -82,11 +107,16 @@ async function fetchData() {
       communes: {},
       total: {
         population: 0,
-        residencesSecondaires: 0
-      }
+        residencesSecondaires: 0,
+        residencesPrincipales: 0,
+        residencesOccupeesProprietaire: 0
+      },
+      year: null,
+      date: null
     };
 
     const codeToName = {};
+
     for (const [name, code] of Object.entries(COMMUNES)) {
       codeToName[code] = name;
     }
@@ -97,26 +127,45 @@ async function fetchData() {
 
       if (!name) continue;
 
-      const population = cleanNumber(row.P22_POP);
-      const residencesSecondaires = cleanNumber(row.P22_RSECOCC);
+      const detected = detectInseeYear(row);
+
+      if (!detected) {
+        console.log(`⚠️ [INSEE] Année introuvable pour ${code}`);
+        continue;
+      }
+
+      const { year, date, fields } = detected;
+
+      const population = cleanNumber(row[fields.population]);
+      const residencesSecondaires = cleanNumber(row[fields.residencesSecondaires]);
+      const residencesPrincipales = cleanNumber(row[fields.residencesPrincipales]);
+      const residencesOccupeesProprietaire = cleanNumber(row[fields.residencesOccupeesProprietaire]);
 
       newCache.communes[name] = {
         code,
         libelle: row.LIBGEO,
         population,
         residencesSecondaires,
-        date: new Date().toISOString()
+        residencesPrincipales,
+        residencesOccupeesProprietaire,
+        year,
+        date
       };
 
       newCache.total.population += population;
       newCache.total.residencesSecondaires += residencesSecondaires;
+      newCache.total.residencesPrincipales += residencesPrincipales;
+      newCache.total.residencesOccupeesProprietaire += residencesOccupeesProprietaire;
+
+      if (!newCache.year) newCache.year = year;
+      if (!newCache.date) newCache.date = date;
     }
 
     cache = newCache;
     lastUpdate = new Date();
     lastError = null;
 
-    console.log(`✅ [INSEE] MAJ terminée (${Object.keys(cache.communes).length} communes)`);
+    console.log(`✅ [INSEE] MAJ terminée (${Object.keys(cache.communes).length} communes, année ${cache.year})`);
 
   } catch (error) {
     lastError = error.message;
@@ -129,11 +178,31 @@ async function fetchData() {
 
 function getValueFromTag(tag) {
   if (tag === 'INSEE_TOTAL_POPULATION') {
-    return cache.total.population;
+    return {
+      value: cache.total.population,
+      date: cache.date
+    };
   }
 
   if (tag === 'INSEE_TOTAL_RESIDENCES_SECONDAIRES') {
-    return cache.total.residencesSecondaires;
+    return {
+      value: cache.total.residencesSecondaires,
+      date: cache.date
+    };
+  }
+
+  if (tag === 'INSEE_TOTAL_RESIDENCES_PRINCIPALES') {
+    return {
+      value: cache.total.residencesPrincipales,
+      date: cache.date
+    };
+  }
+
+  if (tag === 'INSEE_TOTAL_RESIDENCES_OCCUPEES') {
+    return {
+      value: cache.total.residencesOccupeesProprietaire,
+      date: cache.date
+    };
   }
 
   const parts = tag.split('_');
@@ -144,17 +213,31 @@ function getValueFromTag(tag) {
   if (tag.endsWith('_POPULATION')) {
     commune = parts.slice(1, -1).join('_');
     field = 'population';
+
   } else if (tag.endsWith('_RESIDENCES_SECONDAIRES')) {
     commune = parts.slice(1, -2).join('_');
     field = 'residencesSecondaires';
+
+  } else if (tag.endsWith('_RESIDENCES_PRINCIPALES')) {
+    commune = parts.slice(1, -2).join('_');
+    field = 'residencesPrincipales';
+
+  } else if (tag.endsWith('_RESIDENCES_OCCUPEES')) {
+    commune = parts.slice(1, -2).join('_');
+    field = 'residencesOccupeesProprietaire';
+
   } else {
     return null;
   }
 
   const data = cache.communes[commune];
+
   if (!data) return null;
 
-  return data[field];
+  return {
+    value: data[field],
+    date: data.date
+  };
 }
 
 function getStatus() {
@@ -163,7 +246,9 @@ function getStatus() {
     isUpdating,
     lastUpdate,
     lastError,
-    communesCount: Object.keys(cache.communes).length
+    communesCount: Object.keys(cache.communes).length,
+    year: cache.year,
+    date: cache.date
   };
 }
 
@@ -173,6 +258,7 @@ function getCache() {
 
 function init() {
   if (isInitialized) return;
+
   isInitialized = true;
 
   console.log('🔄 Service INSEE initialisé');
